@@ -24,7 +24,7 @@ namespace SeleniumWebDriverSummatorOfNumbers
             [TearDown]
             public void CloseBrouser()
             {
-                driver.Quit();
+                driver.Dispose();
             }
 
         [Test]
@@ -32,7 +32,7 @@ namespace SeleniumWebDriverSummatorOfNumbers
         {
             var pageTitle = driver.Title;
 
-            Assert.That("Number Calculator", Is.EqualTo(pageTitle));
+            Assert.That(pageTitle, Is.EqualTo("Number Calculator"));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SeleniumWebDriverSummatorOfNumbers
             var resultText = driver.FindElement(By.CssSelector("#result")).Text;
 
             //Assert
-            Assert.That("Result: 22", Is.EqualTo(resultText));
+            Assert.That(resultText, Is.EqualTo("Result: 22"));
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace SeleniumWebDriverSummatorOfNumbers
             var resultText = driver.FindElement(By.CssSelector("#result")).Text;
 
             //Assert
-            Assert.That("Result: invalid input", Is.EqualTo(resultText));
+            Assert.That(resultText, Is.EqualTo("Result: invalid input"));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace SeleniumWebDriverSummatorOfNumbers
             var resultText = driver.FindElement(By.CssSelector("#result")).Text;
 
             //Assert
-            Assert.That("Result: 3", Is.EqualTo(resultText));
+            Assert.That(resultText, Is.EqualTo("Result: 3"));
         }
 
         [Test]
@@ -132,15 +132,20 @@ namespace SeleniumWebDriverSummatorOfNumbers
             var resultText = driver.FindElement(By.CssSelector("#result")).Text;
 
             //Assert
-            Assert.That("Result: 20", Is.EqualTo(resultText));
+            Assert.That(resultText, Is.EqualTo("Result: 20"));
         }
 
         [Test]
         public void Test_Add_Two_positive_numbers_And_Reset()
         {
             //Act
+
+            Thread.Sleep(2000);
+
             var FirstNumber = driver.FindElement(By.Id("number1"));
             FirstNumber.SendKeys("5" + Keys.Enter);
+
+            Thread.Sleep(2000);
 
             var Operation = driver.FindElement(By.Id("operation"));
             {
@@ -148,32 +153,43 @@ namespace SeleniumWebDriverSummatorOfNumbers
                 dropdown.FindElement(By.XPath("//option[. = '* (multiply)']")).Click();
             }
 
+            Thread.Sleep(2000);
+
             var SecondNumber = driver.FindElement(By.Id("number2"));
             SecondNumber.SendKeys("4" + Keys.Enter);
 
+            Thread.Sleep(2000);
+
             driver.FindElement(By.Id("calcButton")).Click();
+
+            Thread.Sleep(2000);
 
             //Arange
             var resultText = driver.FindElement(By.CssSelector("#result")).Text;
 
             //Assert
-            Assert.That("Result: 20", Is.EqualTo(resultText));
-            Assert.IsNotEmpty(FirstNumber.GetAttribute("value"));
-            Assert.IsNotEmpty(Operation.GetAttribute("value"));
-            Assert.IsNotEmpty(SecondNumber.GetAttribute("value"));
-            Assert.IsNotEmpty(resultText);
+            Assert.That(resultText, Is.EqualTo("Result: 20"));
+            Assert.That(FirstNumber.GetAttribute("value"), Is.Not.Empty);
+            Assert.That(Operation.GetAttribute("value"), Is.Not.Empty);
+            Assert.That(SecondNumber.GetAttribute("value"), Is.Not.Empty);
+            Assert.That(resultText, Is.Not.Empty);
+
+            Thread.Sleep(2000);
 
             //Arange
             var resetButton = driver.FindElement(By.Id("resetButton"));
             resetButton.Click();
 
+            Thread.Sleep(2000);
+
             //Assert
-            Assert.IsEmpty(FirstNumber.GetAttribute("value"));
-            Assert.IsEmpty(SecondNumber.GetAttribute("value"));
+            Assert.That(FirstNumber.GetAttribute("value"), Is.EqualTo(""));
+            Assert.That(SecondNumber.GetAttribute("value"), Is.EqualTo(""));
             var expectedTextOperationButton = "-- select an operation --";
             var actualText = Operation.GetAttribute("value");
-            Assert.That(expectedTextOperationButton, Is.EqualTo(actualText));
+            Assert.That(actualText, Is.EqualTo(expectedTextOperationButton));
 
+            Thread.Sleep(2000);
         }
 
     }
